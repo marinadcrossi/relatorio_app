@@ -6,6 +6,6 @@ import pandas as pd
 
 
 def juros_page():
-    st.title("Câmbio")
+    st.title("Juros")
     st.markdown("---")
     st.write("Página em desenvolvimento..")
