@@ -1,0 +1,15 @@
+[theme]
+# The primary accent (e.g. buttons, highlights)
+primaryColor = "#06333B"
+
+# Main page background
+backgroundColor = "#F0F2F6"
+
+# Sidebar background
+secondaryBackgroundColor = "#E0E0E0"
+
+# Text color on both backgrounds
+textColor = "#000000"
+
+# Optional: font choices are "sans serif", "serif", or "monospace"
+font = "sans serif"
