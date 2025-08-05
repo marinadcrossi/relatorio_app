@@ -33,7 +33,7 @@ with st.sidebar:
             "currency-exchange",
             "percent",
             "bar-chart",
-            "house"
+            "speedometer2"
         ],
         menu_icon="cast",
         default_index=0,
