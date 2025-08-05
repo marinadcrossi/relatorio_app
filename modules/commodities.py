@@ -2,7 +2,7 @@
 import streamlit as st
 import pandas as pd
 from data_loaders import load_commodities_usd
-from data_loaders import load_commodities_usd
+from data_loaders import load_commodities_brl
 
 def commodities_page():
     st.title("Commodities")
