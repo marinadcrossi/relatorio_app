@@ -13,7 +13,7 @@ st.set_page_config(page_title="Relatório Dados de Mercado", page_icon="💹")
 
 # --- SIDEBAR MENU ---
 with st.sidebar:
-    st.markdown("## 📋 Main Menu")
+    st.markdown("## Menu de Navegação")
     st.markdown("---")
     choice = option_menu(
         menu_title=None,
