@@ -35,7 +35,7 @@ def commodities_page():
         st.vega_lite_chart(df_usd, spec_usd, use_container_width=True)
 
         # Comparativo em índice (Dez/24 = 100)
-        df_idx_u = df_usd.set_index("Date").resample("M").last()
+        df_idx_u = df_usd.set_index("Date").copy()
         base_u = df_idx_u.loc["2024-12-31"]
         df_idx_u = df_idx_u.div(base_u) * 100
         df_idx_u = df_idx_u.reset_index()
@@ -71,7 +71,7 @@ def commodities_page():
         st.vega_lite_chart(df_brl, spec_brl, use_container_width=True)
 
         # Comparativo em índice (Dez/24 = 100)
-        df_idx_b = df_brl.set_index("Date").resample("M").last()
+        df_idx_b = df_brl.set_index("Date").copy()
         base_b = df_idx_b.loc["2024-12-31"]
         df_idx_b = df_idx_b.div(base_b) * 100
         df_idx_b = df_idx_b.reset_index()
