@@ -2,7 +2,7 @@
 
 import streamlit as st
 import pandas as pd
-from data_loaders import load_juros
+#from data_loaders import load_juros
 
 
 def juros_page():
