@@ -9,6 +9,7 @@ def implicitas_page():
     df = load_implicitas("Acompanhamento de Implícitas.xlsx")
     df_plot = df.rename(columns={"Dates": "Date"})
     numeric_cols = [c for c in df_plot.columns if c != "Date"]
+    st.subheader("Inflação Implícita")
     series = st.selectbox("Prazo", numeric_cols)
 
     spec = {
@@ -21,5 +22,5 @@ def implicitas_page():
         },
         "selection": {"grid": {"type": "interval", "bind": "scales"}}
     }
-    st.subheader("Inflação Implícita")
+
     st.vega_lite_chart(df_plot, spec, use_container_width=True)
