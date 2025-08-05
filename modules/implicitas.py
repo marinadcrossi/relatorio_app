@@ -6,7 +6,7 @@ from data_loaders import load_implicitas
 def implicitas_page():
     st.title("Inflação implícita")
     st.markdown("---")
-    df = load_implicitas("Acompanhamento de Implícitas.xlsx.")
+    df = load_implicitas("Acompanhamento de Implícitas.xlsx")
     df_plot = df.rename(columns={"Dates": "Date"})
     numeric_cols = [c for c in df_plot.columns if c != "Date"]
     series = st.selectbox("Prazo", numeric_cols)
