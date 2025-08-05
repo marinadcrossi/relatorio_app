@@ -8,6 +8,8 @@ from modules.bolsas      import bolsas_page
 from modules.cambio      import cambio_page
 from modules.juros       import juros_page
 from modules.commodities import commodities_page
+from modules.implicitas  import implicitas_page
+
 
 st.set_page_config(page_title="Relatório Dados de Mercado", page_icon="💹")
 
@@ -22,14 +24,16 @@ with st.sidebar:
             "Bolsas",
             "Câmbio",
             "Juros",
-            "Commodities"
+            "Commodities",
+            "Inflação Implícita"
         ],
         icons=[
             "house",
             "graph-up",
             "currency-exchange",
             "percent",
-            "bar-chart"
+            "bar-chart",
+            "house"
         ],
         menu_icon="cast",
         default_index=0,
@@ -60,3 +64,5 @@ elif choice == "Juros":
     juros_page()
 elif choice == "Commodities":
     commodities_page()
+elif choice == "Inflação Implícita":
+    implicitas_page()

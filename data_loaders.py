@@ -28,3 +28,9 @@ def load_commodities_brl(path):
     df = pd.read_excel(path, sheet_name='commodities_brl', engine="openpyxl")
     df["Dates"] = pd.to_datetime(df["Dates"])
     return df
+
+#@st.cache_data
+def load_implicitas(path):
+    df = pd.read_excel(path, sheet_name='implicitas', engine="openpyxl")
+    df["Dates"] = pd.to_datetime(df["Dates"])
+    return df
