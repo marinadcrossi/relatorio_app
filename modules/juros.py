@@ -88,25 +88,27 @@ def juros_page():
     subset["RatePct"] = subset["Rate"] * 100      # 0.1412 → 14.12
 
     chart = (
-        alt.Chart(subset)
-        .mark_line(point=True)
-        .encode(
-            x=alt.X("Maturity:T", title="Maturity date"),
-            y=alt.Y("RatePct:Q", title="Rate (%)"),
-            color=alt.Color(
-                "RefDate:T",
-                title="Reference",
-                legend=alt.Legend(format="%d-%b-%Y")   # 01-Aug-2025 etc.
-            ),
-            tooltip=[
-                alt.Tooltip("RefDate:T", title="Reference", format="%d-%b-%Y"),
-                alt.Tooltip("Maturity:T", title="Maturity"),
-                alt.Tooltip("RatePct:Q",   title="Rate",    format=".2%")
-            ],
-        )
-        .properties(height=450)
-        .interactive()
+    alt.Chart(subset)
+    .mark_line(point=True, strokeWidth=2)
+    .encode(
+        x=alt.X("Maturity:T", title="Maturity date"),
+        y=alt.Y("RatePct:Q",  title="Rate (%)"),
+        color=alt.Color(
+            "RefDate:T",
+            title="Reference",
+            legend=alt.Legend(format="%d-%b-%Y"),
+            scale=alt.Scale(scheme="tableau10")     # ← paleta vibrante
+        ),
+        tooltip=[
+            alt.Tooltip("RefDate:T",  title="Reference", format="%d-%b-%Y"),
+            alt.Tooltip("Maturity:T", title="Maturity"),
+            alt.Tooltip("RatePct:Q",  title="Rate (%)", format=".2f")
+        ],
     )
+    .properties(height=450)
+    .interactive()
+)
+
 
 
     st.altair_chart(chart, use_container_width=True)
