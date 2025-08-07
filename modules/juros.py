@@ -84,36 +84,38 @@ def juros_page():
         st.info("Choose at least one date.")
         return
 
-    subset = curves[curves["RefDate"].isin(chosen)]
-    subset["RatePct"] = subset["Rate"] * 100      # 0.1412 → 14.12
+    # antes de usar .dt, converta explicitamente
+    subset = curves[curves["RefDate"].isin(chosen)].copy()
 
-
-    subset["RefStr"] = subset["RefDate"].dt.strftime("%d-%b-%Y")   # 31-Jan-2025 …
-
+    subset["RefDate"] = pd.to_datetime(subset["RefDate"])          # ← garante datetime
+    subset["RatePct"] = subset["Rate"] * 100
+    subset["RefStr"] = subset["RefDate"].dt.strftime("%d-%b-%Y")
+    
     chart = (
-        alt.Chart(subset)
-        .mark_line(point=True, strokeWidth=2)
-        .encode(
-            x=alt.X("Maturity:T", title="Maturity date"),
-            y=alt.Y("RatePct:Q",  title="Rate (%)"),
-            color=alt.Color(
-                "RefStr:N",                       # ← campo nominal
-                title="Reference",
-                scale=alt.Scale(scheme="set1"),   # paleta vibrante
-                legend=alt.Legend(labelOverlap=False)
-            ),
-            tooltip=[
-                alt.Tooltip("RefStr:N",  title="Reference"),
-                alt.Tooltip("Maturity:T", title="Maturity"),
-                alt.Tooltip("RatePct:Q",  title="Rate (%)", format=".2f")
-            ],
-        )
-        .properties(height=450)
-        .interactive()
+    alt.Chart(subset)
+    .mark_line(point=True, strokeWidth=2)
+    .encode(
+        x=alt.X("Maturity:T", title="Maturity date"),
+        y=alt.Y("RatePct:Q",  title="Rate (%)"),
+        color=alt.Color(
+            "RefStr:N",
+            title="Reference",
+            scale=alt.Scale(scheme="set1"),     # verm., azul, verde, laranja…
+            legend=alt.Legend(labelOverlap=False)
+        ),
+        tooltip=[
+            alt.Tooltip("RefStr:N",  title="Reference"),
+            alt.Tooltip("Maturity:T", title="Maturity"),
+            alt.Tooltip("RatePct:Q",  title="Rate (%)", format=".2f")
+        ],
+    )
+    .properties(height=450)
+    .interactive()
     )
 
-    st.altair_chart(chart, use_container_width=True)
-  
+    st.altair_chart(chart, use_container_width=True)   # 31-Jan-2025 …
+
+
     
 
 
