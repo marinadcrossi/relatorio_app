@@ -68,7 +68,7 @@ def load_curves() -> pd.DataFrame:
     
 
 def juros_page():
-    st.title("Juros")
+    st.title("Juros: testando")
     st.markdown("---")
 
     curves = load_curves()
