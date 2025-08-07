@@ -87,6 +87,9 @@ def juros_page():
     subset = curves[curves["RefDate"].isin(chosen)]
     subset["RatePct"] = subset["Rate"] * 100      # 0.1412 → 14.12
 
+    bright = ["#0D3453", "#b3a70c", "#2B2C2B", "#eb1248",
+          "#1C9659", "#da810c", "#f781bf", "#479dd6"]
+
     chart = (
     alt.Chart(subset)
     .mark_line(point=True, strokeWidth=2)
@@ -97,7 +100,7 @@ def juros_page():
             "RefDate:T",
             title="Reference",
             legend=alt.Legend(format="%d-%b-%Y"),
-            scale=alt.Scale(scheme="set1")     # ← paleta vibrante
+            scale=alt.Scale(range=bright)     # ← paleta vibrante
         ),
         tooltip=[
             alt.Tooltip("RefDate:T",  title="Reference", format="%d-%b-%Y"),
