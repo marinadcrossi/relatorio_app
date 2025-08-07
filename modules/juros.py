@@ -33,6 +33,12 @@ def juros_page():
     di1['Rate'] = (100000 / di1['PUAtual'])**(252 / di1['DU']) - 1
     di1_curve = di1[['DataRef', 'Maturity', 'DU', 'Rate']]
 
-    di1_curve.plot(x='Maturity', y='Rate', figsize=(20,6), style='-o',
-                ylabel='Rate', xlabel='Date', title='DI1 Curve - 2021-11-01')
-    plt.show()
+   # build the plot
+    fig, ax = plt.subplots(figsize=(20, 6))
+    di1_curve.plot(x='Maturity', y='Rate', style='o-', ax=ax)
+    ax.set_xlabel('Date')
+    ax.set_ylabel('Rate')
+    ax.set_title('DI1 Curve – 2021-11-01')
+
+    # display inside Streamlit
+    st.pyplot(fig)
