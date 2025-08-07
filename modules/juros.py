@@ -87,8 +87,10 @@ def juros_page():
     subset = curves[curves["RefDate"].isin(chosen)]
     subset["RatePct"] = subset["Rate"] * 100      # 0.1412 → 14.12
 
-    bright = ["#0D3453", "#b3a70c", "#2B2C2B", "#eb1248",
-          "#1C9659", "#da810c", "#f781bf", "#479dd6"]
+    bright = ["#0D3453", "#e41717", "#15DD15", "#eb1248",
+          "#D123A6", "#da810c", "#f781bf", "#479dd6"]
+    
+
 
     chart = (
     alt.Chart(subset)
