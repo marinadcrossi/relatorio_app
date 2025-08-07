@@ -55,8 +55,9 @@ def load_curves() -> pd.DataFrame:
     for ref in fridays:
         try:
             new_parts.append(make_curve(ref.date()))
-        except Exception as e:
-            st.warning(f"Curve {ref.date()} skipped: {e}")
+        except Exception:
+            #st.warning(f"Curve {ref.date()} skipped: {e}")
+            pass
 
     if new_parts:
         curves = pd.concat([curves, *new_parts]).reset_index(drop=True)
@@ -84,18 +85,28 @@ def juros_page():
         return
 
     subset = curves[curves["RefDate"].isin(chosen)]
+    subset["RatePct"] = subset["Rate"] * 100      # 0.1412 → 14.12
 
     chart = (
         alt.Chart(subset)
         .mark_line(point=True)
         .encode(
             x=alt.X("Maturity:T", title="Maturity date"),
-            y=alt.Y("Rate:Q", title="Rate"),
-            color=alt.Color("RefDate:N", title="Reference"),
-            tooltip=["RefDate:N", "Maturity:T", alt.Tooltip("Rate:Q", format=".2%")]
+            y=alt.Y("RatePCt:Q", title="Rate (%)"),
+            color=alt.Color(
+                "RefDate:T",
+                title="Reference",
+                legend=alt.Legend(format="%d-%b-%Y")   # 01-Aug-2025 etc.
+            ),
+            tooltip=[
+                alt.Tooltip("RefDate:T", title="Reference", format="%d-%b-%Y"),
+                alt.Tooltip("Maturity:T", title="Maturity"),
+                alt.Tooltip("RatePct:Q",   title="Rate",    format=".2%")
+            ],
         )
         .properties(height=450)
-        .interactive()                      # pan & zoom x and y
+        .interactive()
     )
+
 
     st.altair_chart(chart, use_container_width=True)
