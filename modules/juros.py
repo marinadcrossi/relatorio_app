@@ -68,7 +68,7 @@ def load_curves() -> pd.DataFrame:
     
 
 def juros_page():
-    st.title("Juros: testando")
+    st.title("Juros")
     st.markdown("---")
 
     curves = load_curves()
@@ -92,7 +92,7 @@ def juros_page():
         .mark_line(point=True)
         .encode(
             x=alt.X("Maturity:T", title="Maturity date"),
-            y=alt.Y("RatePCt:Q", title="Rate (%)"),
+            y=alt.Y("RatePct:Q", title="Rate (%)"),
             color=alt.Color(
                 "RefDate:T",
                 title="Reference",
