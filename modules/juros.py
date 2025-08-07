@@ -9,41 +9,93 @@ from bcb import currency, sgs
 import bizdays
 from myfuncs import get_contracts
 from bizdays import Calendar
-import datetime
+import datetime as dt
+from pathlib import Path
 
 
+CAL = Calendar.load("ANBIMA")
+DATA_FILE = Path("data/di1_curves.parquet")
+START_DATE = dt.date(2025, 1, 3)                    # first Friday of 2025
+
+
+def make_curve(refdate: dt.date) -> pd.DataFrame:
+    df = get_contracts(refdate)
+
+    di1 = df.loc[(df["Mercadoria"] == "DI1") &
+                 (df["PUAtual"] != 100_000)].copy()
+
+    di1["Maturity"] = di1["Vencimento"].map(CAL.following)
+    di1["DU"] = di1.apply(lambda x: CAL.bizdays(x["DataRef"], x["Maturity"]),
+                          axis=1)
+    di1["Rate"] = (100_000 / di1["PUAtual"]) ** (252 / di1["DU"]) - 1
+
+    di1 = di1[["DataRef", "Maturity", "Rate"]].rename(
+        columns={"DataRef": "RefDate"})
+    di1["RefDate"] = pd.to_datetime(di1["RefDate"]).dt.date
+    return di1
+
+
+@st.cache_data(show_spinner=False)
+def load_curves() -> pd.DataFrame:
+    """Read existing file or create it from scratch (may take a minute)."""
+    if DATA_FILE.exists():
+        curves = pd.read_parquet(DATA_FILE)
+    else:
+        curves = pd.DataFrame(columns=["RefDate", "Maturity", "Rate"])
+
+    # ---------------------------------------------------------------
+    # Append any missing Fridays up to *today*
+    # ---------------------------------------------------------------
+    last_saved = curves["RefDate"].max() if not curves.empty else START_DATE - dt.timedelta(days=7)
+    fridays = pd.date_range(last_saved + dt.timedelta(days=7),
+                            dt.date.today(),
+                            freq="W-FRI")
+
+    new_parts = []
+    for ref in fridays:
+        try:
+            new_parts.append(make_curve(ref.date()))
+        except Exception as e:
+            st.warning(f"Curve {ref.date()} skipped: {e}")
+
+    if new_parts:
+        curves = pd.concat([curves, *new_parts]).reset_index(drop=True)
+        DATA_FILE.parent.mkdir(exist_ok=True)
+        curves.to_parquet(DATA_FILE, index=False)
+
+    return curves
+    
 
 def juros_page():
     st.title("Juros")
     st.markdown("---")
-    st.write("Página em desenvolvimento..")
 
-    cal=Calendar.load('ANBIMA')
+    curves = load_curves()
+    all_dates = sorted(curves["RefDate"].unique())
+    default_last = all_dates[-1:]                   # show latest curve by default
 
-    #Colocar aqui a data de referência para puxar a curva
-    refdate = datetime.datetime(2025, 5, 2)
-    df = get_contracts(refdate)
+    chosen = st.multiselect("Select reference dates",
+                            options=all_dates,
+                            default=default_last,
+                            format_func=lambda d: d.strftime("%d-%b-%Y"))
 
-    di1 = df.loc[(df["Mercadoria"] == "DI1") & (df["PUAtual"] != 100_000)].copy()
-    di1["Maturity"] = di1["Vencimento"].map(cal.following)
-    di1["DU"] = di1.apply(lambda x: cal.bizdays(x["DataRef"], x["Maturity"]), axis=1)
-    di1["Rate"] = (100_000 / di1["PUAtual"]) ** (252 / di1["DU"]) - 1
-    curve = di1[["Maturity", "Rate"]].sort_values("Maturity")
+    if not chosen:
+        st.info("Choose at least one date.")
+        return
 
-    # ------------------------------------------------------------------
-    # 2. Altair chart with interactive scales
-    # ------------------------------------------------------------------
-    spec = (
-        alt.Chart(curve)
-        .mark_line(point=True, color="#06333B")
+    subset = curves[curves["RefDate"].isin(chosen)]
+
+    chart = (
+        alt.Chart(subset)
+        .mark_line(point=True)
         .encode(
             x=alt.X("Maturity:T", title="Maturity date"),
             y=alt.Y("Rate:Q", title="Rate"),
+            color=alt.Color("RefDate:N", title="Reference"),
+            tooltip=["RefDate:N", "Maturity:T", alt.Tooltip("Rate:Q", format=".2%")]
         )
-        .properties(height=400)
-        .interactive()  # pan/zoom enabled
+        .properties(height=450)
+        .interactive()                      # pan & zoom x and y
     )
 
-    st.altair_chart(spec, use_container_width=True)
-
-    st.caption("Pan / scroll to zoom; double-click to reset.")
+    st.altair_chart(chart, use_container_width=True)
