@@ -41,7 +41,7 @@ def juros_page():
             y=alt.Y("Rate:Q", title="Rate"),
         )
         .properties(height=400)
-        .interactive(bind_y=False)  # pan/zoom on x; keep y fixed (or omit for both)
+        #.interactive(bind_y=False)  # pan/zoom on x; keep y fixed (or omit for both)
     )
 
     st.altair_chart(spec, use_container_width=True)
