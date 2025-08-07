@@ -87,10 +87,16 @@ def juros_page():
     # antes de usar .dt, converta explicitamente
     subset = curves[curves["RefDate"].isin(chosen)].copy()
 
-    subset["RefDate"] = pd.to_datetime(subset["RefDate"])          # ← garante datetime
+    # 1) Converte para datetime, transformando valores inválidos em NaT
+    subset["RefDate"] = pd.to_datetime(subset["RefDate"], errors="coerce")
+
+    # 2) Confere se algum valor ficou NaT (caso haja linhas sem data)
+    if subset["RefDate"].isna().any():
+        subset = subset.dropna(subset=["RefDate"])   # ou trate como preferir
+
+    # 3) Agora é seguro usar .dt
     subset["RatePct"] = subset["Rate"] * 100
-    subset["RefStr"] = subset["RefDate"].dt.strftime("%d-%b-%Y")
-    
+    subset["RefStr"]  = subset["RefDate"].dt.strftime("%d-%b-%Y")
     chart = (
     alt.Chart(subset)
     .mark_line(point=True, strokeWidth=2)
