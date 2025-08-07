@@ -97,7 +97,7 @@ def juros_page():
             "RefDate:T",
             title="Reference",
             legend=alt.Legend(format="%d-%b-%Y"),
-            scale=alt.Scale(scheme="tableau10")     # ← paleta vibrante
+            scale=alt.Scale(scheme="set1")     # ← paleta vibrante
         ),
         tooltip=[
             alt.Tooltip("RefDate:T",  title="Reference", format="%d-%b-%Y"),
