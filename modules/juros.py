@@ -87,33 +87,34 @@ def juros_page():
     subset = curves[curves["RefDate"].isin(chosen)]
     subset["RatePct"] = subset["Rate"] * 100      # 0.1412 → 14.12
 
-    bright = ["#0D3453", "#e41717", "#15DD15", "#eb1248",
-          "#D123A6", "#da810c", "#f781bf", "#479dd6"]
+
+    subset["RefStr"] = subset["RefDate"].dt.strftime("%d-%b-%Y")   # 31-Jan-2025 …
+
+    chart = (
+        alt.Chart(subset)
+        .mark_line(point=True, strokeWidth=2)
+        .encode(
+            x=alt.X("Maturity:T", title="Maturity date"),
+            y=alt.Y("RatePct:Q",  title="Rate (%)"),
+            color=alt.Color(
+                "RefStr:N",                       # ← campo nominal
+                title="Reference",
+                scale=alt.Scale(scheme="set1"),   # paleta vibrante
+                legend=alt.Legend(labelOverlap=False)
+            ),
+            tooltip=[
+                alt.Tooltip("RefStr:N",  title="Reference"),
+                alt.Tooltip("Maturity:T", title="Maturity"),
+                alt.Tooltip("RatePct:Q",  title="Rate (%)", format=".2f")
+            ],
+        )
+        .properties(height=450)
+        .interactive()
+    )
+
+    st.altair_chart(chart, use_container_width=True)
+  
     
 
 
-    chart = (
-    alt.Chart(subset)
-    .mark_line(point=True, strokeWidth=2)
-    .encode(
-        x=alt.X("Maturity:T", title="Maturity date"),
-        y=alt.Y("RatePct:Q",  title="Rate (%)"),
-        color=alt.Color(
-            "RefDate:T",
-            title="Reference",
-            legend=alt.Legend(format="%d-%b-%Y"),
-            scale=alt.Scale(range=bright)     # ← paleta vibrante
-        ),
-        tooltip=[
-            alt.Tooltip("RefDate:T",  title="Reference", format="%d-%b-%Y"),
-            alt.Tooltip("Maturity:T", title="Maturity"),
-            alt.Tooltip("RatePct:Q",  title="Rate (%)", format=".2f")
-        ],
-    )
-    .properties(height=450)
-    .interactive()
-)
-
-
-
-    st.altair_chart(chart, use_container_width=True)
+   
