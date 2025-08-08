@@ -139,28 +139,25 @@ def juros_page():
         st.altair_chart(chart, use_container_width=True)   # 31-Jan-2025 …
 
         numeric_cols = [c for c in df_nominal.columns if c != "Date"]
-        series = st.selectbox("Prazos", numeric_cols)
+        chosen = st.multiselect("Quais Prazos?", numeric_cols, default=numeric_cols)
+        df_nominal_sel = df_nominal[["Date"] + chosen]
+        df_nominal_long = df_nominal_sel.melt(id_vars="Date", var_name="Prazo", value_name="% a.a.")
 
         spec = {
             "mark": {"type": "line", "color": "#06333B"},
             "encoding": {
                 "x": {"field": "Date", "type": "temporal", "title": "Date",
                     "axis": {"grid": True, "gridColor": "#e0e0e0", "gridOpacity": 1}},
-                "y": {"field": series, "type": "quantitative", "title": '% a.a.',
+                "y": {"field": '%a.a.', "type": "quantitative", "title": '% a.a.',
                     "axis": {"grid": True, "gridColor": "#e0e0e0", "gridOpacity": 1}}
             },
             "selection": {"grid": {"type": "interval", "bind": "scales"}}
         }
         st.subheader(f"Juros Prefixados {series}")
-        st.vega_lite_chart(df_nominal, spec, use_container_width=True)
+        st.vega_lite_chart(df_nominal_sel, spec, use_container_width=True)
 
     with tab_real:
         st.subheader("Taxas de juros reais")
-
-
-
-    
-
 
     
 
