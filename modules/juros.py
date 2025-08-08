@@ -145,17 +145,29 @@ def juros_page():
         #st.write("Pré-visualização:", df_nominal_long.head(), df_nominal_long.dtypes)
         #st.write("Linhas:", len(df_nominal_long))
 
+        
+        # Especificação do gráfico
         spec = {
-            "mark": {"type": "line", "color": "#06333B"},
+            "mark": {"type": "line", "point": False, "strokeWidth": 2},   # ← sem 'color' aqui
             "encoding": {
-                "x": {"field": "Date", "type": "temporal", "title": "Date",
-                    "axis": {"grid": True, "gridColor": "#e0e0e0", "gridOpacity": 1}},
-                "y": {"field": "Taxa", "type": "quantitative", "title": 'Taxa (%)',
-                    "axis": {"grid": True, "gridColor": "#e0e0e0", "gridOpacity": 1}}
+                "x": {
+                    "field": "Date", "type": "temporal", "title": "Date",
+                    "axis": {"grid": True, "gridColor": "#e0e0e0", "gridOpacity": 1}
+                },
+                "y": {
+                    "field": "Taxa", "type": "quantitative", "title": "Taxa (%)",
+                    "axis": {"grid": True, "gridColor": "#e0e0e0", "gridOpacity": 1}
+                },
+                "color": {                               # ← canal de cor por Prazo
+                    "field": "Prazo", "type": "nominal",
+                    "title": "Prazo",
+                    "scale": {"scheme": "set1"},         # paleta (opcional)
+                    "legend": {"labelOverlap": False}
+                }
             },
             "selection": {"grid": {"type": "interval", "bind": "scales"}}
         }
-        st.subheader(f"Juros Prefixados")
+
         st.vega_lite_chart(df_nominal_long, spec, use_container_width=True)
 
     with tab_real:
