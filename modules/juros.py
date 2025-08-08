@@ -11,6 +11,8 @@ from myfuncs import get_contracts
 from bizdays import Calendar
 import datetime as dt
 from pathlib import Path
+from data_loaders import load_nominal
+from data_loaders import load_real
 
 
 CAL = Calendar.load("ANBIMA")
@@ -71,55 +73,77 @@ def juros_page():
     st.title("Juros")
     st.markdown("---")
 
-    curves = load_curves()
-    all_dates = sorted(curves["RefDate"].unique())
-    default_last = all_dates[-1:]                   # show latest curve by default
+    # Carrega dados de juros nominal e real
+    df_nominal = load_nominal("base.xlsx")
+    df_real = load_real("base.xlsx")
 
-    chosen = st.multiselect("Select reference dates",
-                            options=all_dates,
-                            default=default_last,
-                            format_func=lambda d: d.strftime("%d-%b-%Y"))
+    # Padroniza coluna de data
+    df_nominal = df_nominal.rename(columns={"Dates": "Date"})
+    df_real = df_real.rename(columns={"Dates": "Date"})
 
-    if not chosen:
-        st.info("Choose at least one date.")
-        return
 
-    # antes de usar .dt, converta explicitamente
-    subset = curves[curves["RefDate"].isin(chosen)].copy()
+    # Cria abas
+    tab_nominal, tab_real = st.tabs(["Nominal", "Real"])
 
-    # 1) Converte para datetime, transformando valores inválidos em NaT
-    subset["RefDate"] = pd.to_datetime(subset["RefDate"], errors="coerce")
+    with tab_nominal:
 
-    # 2) Confere se algum valor ficou NaT (caso haja linhas sem data)
-    if subset["RefDate"].isna().any():
-        subset = subset.dropna(subset=["RefDate"])   # ou trate como preferir
 
-    # 3) Agora é seguro usar .dt
-    subset["RatePct"] = subset["Rate"] * 100
-    subset["RefStr"]  = subset["RefDate"].dt.strftime("%d-%b-%Y")
-    chart = (
-    alt.Chart(subset)
-    .mark_line(point=True, strokeWidth=2)
-    .encode(
-        x=alt.X("Maturity:T", title="Maturity date"),
-        y=alt.Y("RatePct:Q",  title="Rate (%)"),
-        color=alt.Color(
-            "RefStr:N",
-            title="Reference",
-            scale=alt.Scale(scheme="set1"),     # verm., azul, verde, laranja…
-            legend=alt.Legend(labelOverlap=False)
-        ),
-        tooltip=[
-            alt.Tooltip("RefStr:N",  title="Reference"),
-            alt.Tooltip("Maturity:T", title="Maturity"),
-            alt.Tooltip("RatePct:Q",  title="Rate (%)", format=".2f")
-        ],
-    )
-    .properties(height=450)
-    .interactive()
-    )
+        curves = load_curves()
+        all_dates = sorted(curves["RefDate"].unique())
+        default_last = all_dates[-1:]                   # show latest curve by default
 
-    st.altair_chart(chart, use_container_width=True)   # 31-Jan-2025 …
+        chosen = st.multiselect("Select reference dates",
+                                options=all_dates,
+                                default=default_last,
+                                format_func=lambda d: d.strftime("%d-%b-%Y"))
+
+        if not chosen:
+            st.info("Choose at least one date.")
+            return
+
+        # antes de usar .dt, converta explicitamente
+        subset = curves[curves["RefDate"].isin(chosen)].copy()
+
+        # 1) Converte para datetime, transformando valores inválidos em NaT
+        subset["RefDate"] = pd.to_datetime(subset["RefDate"], errors="coerce")
+
+        # 2) Confere se algum valor ficou NaT (caso haja linhas sem data)
+        if subset["RefDate"].isna().any():
+            subset = subset.dropna(subset=["RefDate"])   # ou trate como preferir
+
+        # 3) Agora é seguro usar .dt
+        subset["RatePct"] = subset["Rate"] * 100
+        subset["RefStr"]  = subset["RefDate"].dt.strftime("%d-%b-%Y")
+        chart = (
+        alt.Chart(subset)
+        .mark_line(point=True, strokeWidth=2)
+        .encode(
+            x=alt.X("Maturity:T", title="Maturity date"),
+            y=alt.Y("RatePct:Q",  title="Rate (%)"),
+            color=alt.Color(
+                "RefStr:N",
+                title="Reference",
+                scale=alt.Scale(scheme="set1"),     # verm., azul, verde, laranja…
+                legend=alt.Legend(labelOverlap=False)
+            ),
+            tooltip=[
+                alt.Tooltip("RefStr:N",  title="Reference"),
+                alt.Tooltip("Maturity:T", title="Maturity"),
+                alt.Tooltip("RatePct:Q",  title="Rate (%)", format=".2f")
+            ],
+        )
+        .properties(height=450)
+        .interactive()
+        )
+
+        st.altair_chart(chart, use_container_width=True)   # 31-Jan-2025 …
+
+    with tab_real:
+        st.subheader("Taxas de juros reais")
+
+
+
+    
 
 
     
