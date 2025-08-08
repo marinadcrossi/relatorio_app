@@ -74,8 +74,8 @@ def juros_page():
     st.markdown("---")
 
     # Carrega dados de juros nominal e real
-    df_nominal = load_nominal("base.xlsx")
-    df_real = load_real("base.xlsx")
+    df_nominal = load_nominal("Acompanhamento de Implícitas.xlsx")
+    df_real = load_real("Acompanhamento de Implícitas.xlsx")
 
     # Padroniza coluna de data
     df_nominal = df_nominal.rename(columns={"Dates": "Date"})
