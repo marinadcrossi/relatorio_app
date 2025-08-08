@@ -141,7 +141,7 @@ def juros_page():
         numeric_cols = [c for c in df_nominal.columns if c != "Date"]
         chosen = st.multiselect("Quais Prazos?", numeric_cols, default=numeric_cols)
         df_nominal_sel = df_nominal[["Date"] + chosen]
-        df_nominal_long = df_nominal_sel.melt(id_vars="Date", var_name="Prazo", value_name="% a.a.")
+        df_nominal_long = df_nominal_sel.melt(id_vars="Date", var_name="Prazo", value_name="Taxa")
         st.write("Pré-visualização:", df_nominal_long.head(), df_nominal_long.dtypes)
         st.write("Linhas:", len(df_nominal_long))
 
@@ -150,7 +150,7 @@ def juros_page():
             "encoding": {
                 "x": {"field": "Date", "type": "temporal", "title": "Date",
                     "axis": {"grid": True, "gridColor": "#e0e0e0", "gridOpacity": 1}},
-                "y": {"field": "% a\\.a.", "type": "quantitative", "title": '% a.a.',
+                "y": {"field": "Taxa", "type": "quantitative", "title": 'Taxa (%)',
                     "axis": {"grid": True, "gridColor": "#e0e0e0", "gridOpacity": 1}}
             },
             "selection": {"grid": {"type": "interval", "bind": "scales"}}
