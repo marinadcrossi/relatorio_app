@@ -138,6 +138,23 @@ def juros_page():
 
         st.altair_chart(chart, use_container_width=True)   # 31-Jan-2025 …
 
+        numeric_cols = [c for c in df_nominal.columns if c != "Date"]
+        series = st.selectbox("Prazos", numeric_cols)
+
+        spec = {
+            "mark": {"type": "line", "color": "#06333B"},
+            "encoding": {
+                "x": {"field": "Date", "type": "temporal", "title": "Date",
+                    "axis": {"grid": True, "gridColor": "#e0e0e0", "gridOpacity": 1}},
+                "y": {"field": series, "type": "quantitative", "title": series,
+                    "axis": {"grid": True, "gridColor": "#e0e0e0", "gridOpacity": 1}}
+            },
+            "selection": {"grid": {"type": "interval", "bind": "scales"}}
+        }
+        st.subheader("Moedas")
+        st.markdown("Currency/USD")
+        st.vega_lite_chart(df_nominal, spec, use_container_width=True)
+
     with tab_real:
         st.subheader("Taxas de juros reais")
 
