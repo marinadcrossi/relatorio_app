@@ -154,7 +154,7 @@ def juros_page():
             "selection": {"grid": {"type": "interval", "bind": "scales"}}
         }
         st.subheader(f"Juros Prefixados {series}")
-        st.vega_lite_chart(df_nominal_sel, spec, use_container_width=True)
+        st.vega_lite_chart(df_nominal_long, spec, use_container_width=True)
 
     with tab_real:
         st.subheader("Taxas de juros reais")
