@@ -146,13 +146,12 @@ def juros_page():
             "encoding": {
                 "x": {"field": "Date", "type": "temporal", "title": "Date",
                     "axis": {"grid": True, "gridColor": "#e0e0e0", "gridOpacity": 1}},
-                "y": {"field": series, "type": "quantitative", "title": series,
+                "y": {"field": series, "type": "quantitative", "title": '% a.a.',
                     "axis": {"grid": True, "gridColor": "#e0e0e0", "gridOpacity": 1}}
             },
             "selection": {"grid": {"type": "interval", "bind": "scales"}}
         }
-        st.subheader("Moedas")
-        st.markdown("Currency/USD")
+        st.subheader("Juros Prefixados")
         st.vega_lite_chart(df_nominal, spec, use_container_width=True)
 
     with tab_real:
