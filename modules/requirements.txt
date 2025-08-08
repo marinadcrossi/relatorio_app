@@ -6,3 +6,4 @@ bizdays
 lxml
 requests
 pyarrow
+data_loaders

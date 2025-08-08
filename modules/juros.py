@@ -150,7 +150,7 @@ def juros_page():
             "encoding": {
                 "x": {"field": "Date", "type": "temporal", "title": "Date",
                     "axis": {"grid": True, "gridColor": "#e0e0e0", "gridOpacity": 1}},
-                "y": {"field": '%a.a.', "type": "quantitative", "title": '% a.a.',
+                "y": {"field": '% a.a.', "type": "quantitative", "title": '% a.a.',
                     "axis": {"grid": True, "gridColor": "#e0e0e0", "gridOpacity": 1}}
             },
             "selection": {"grid": {"type": "interval", "bind": "scales"}}
