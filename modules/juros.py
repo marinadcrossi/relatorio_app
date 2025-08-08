@@ -142,8 +142,8 @@ def juros_page():
         chosen = st.multiselect("Quais Prazos?", numeric_cols, default=numeric_cols)
         df_nominal_sel = df_nominal[["Date"] + chosen]
         df_nominal_long = df_nominal_sel.melt(id_vars="Date", var_name="Prazo", value_name="Taxa")
-        st.write("Pré-visualização:", df_nominal_long.head(), df_nominal_long.dtypes)
-        st.write("Linhas:", len(df_nominal_long))
+        #st.write("Pré-visualização:", df_nominal_long.head(), df_nominal_long.dtypes)
+        #st.write("Linhas:", len(df_nominal_long))
 
         spec = {
             "mark": {"type": "line", "color": "#06333B"},
